@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b0a10" />
+  <title>좋아요 실수로 눌렀다! — 순발력 게임</title>
+  <style>
+    :root { color-scheme: dark; font-family: Pretendard, "Apple SD Gothic Neo", "Malgun Gothic", system-ui, sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; min-height: 100vh; color: #f7f3f8; background: radial-gradient(ellipse 55% 43% at 10% 15%, #4c1d4e77, transparent 85%), radial-gradient(ellipse 60% 48% at 100% 100%, #3c244b6e, transparent 85%), #0b0a10; }
+    body::after { content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .14; background-image: radial-gradient(#fff 0.5px, transparent 0.5px); background-size: 7px 7px; }
+    button { font: inherit; cursor: pointer; }
+    button:focus-visible { outline: 3px solid #f3a9df; outline-offset: 4px; }
+    .page { position: relative; max-width: 1120px; margin: 0 auto; padding: 35px 27px 46px; }
+    .masthead { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 42px; }
+    .brand { display: flex; gap: 10px; align-items: center; font-weight: 900; letter-spacing: .08em; font-size: 14px; }
+    .brand-mark { width: 30px; height: 30px; display: grid; place-items: center; color: #160b17; background: #f9aed3; border-radius: 8px; transform: rotate(-8deg); font-size: 21px; }
+    .tag { border: 1px solid #ffffff2a; background: #ffffff0d; color: #c6b7cd; font-size: 11px; border-radius: 99px; padding: 9px 13px; letter-spacing: .05em; }
+    .layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(330px, 430px); align-items: center; gap: 64px; }
+    .eyebrow { color: #f4a9d6; font-size: 12px; font-weight: 900; letter-spacing: .16em; margin: 0 0 17px; }
+    h1 { font-size: clamp(44px, 5.7vw, 78px); letter-spacing: -.075em; line-height: 1.07; margin: 0 0 24px; word-break: keep-all; }
+    h1 em { font-style: normal; color: #f8add5; text-shadow: 0 0 38px #ea7aa34b; }
+    .description { font-size: 16px; line-height: 1.9; color: #c0b7c8; max-width: 380px; margin: 0 0 30px; word-break: keep-all; }
+    .instruction { display: grid; gap: 11px; margin-bottom: 32px; }
+    .step { display: flex; align-items: center; gap: 13px; color: #ded3e0; font-size: 13px; }
+    .num { width: 31px; height: 31px; flex: 0 0 31px; display: grid; place-items: center; border-radius: 9px; background: #ffffff10; border: 1px solid #ffffff17; color: #ffa8d0; font-size: 11px; font-weight: 900; }
+    .primary { border: 0; background: linear-gradient(125deg, #ffa9ce, #e58bbb); color: #271421; font-weight: 900; letter-spacing: -.025em; padding: 16px 26px; border-radius: 12px; box-shadow: 0 13px 34px #b45f9545; transition: transform .15s, filter .15s; }
+    .primary:hover { filter: brightness(1.09); transform: translateY(-2px); }
+    .primary:active { transform: scale(.98); }
+    .subtext { font-size: 11px; color: #8d8192; margin: 13px 0 0; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 9px; margin-top: 34px; }
+    .stat { padding: 17px 14px; background: #ffffff08; border: 1px solid #ffffff14; border-radius: 13px; min-width: 0; }
+    .stat-label { display: block; color: #a99aaa; font-size: 11px; margin-bottom: 8px; }
+    .stat strong { font-variant-numeric: tabular-nums; font-size: 21px; letter-spacing: -.04em; white-space: nowrap; }
+    .phone-area { padding: 15px; background: linear-gradient(145deg, #4b3a50, #211922 30%, #17131a); border: 1px solid #ffffff24; border-radius: 29px; box-shadow: 0 37px 80px #0009, 0 0 0 6px #ffffff05; }
+    .phone { overflow: hidden; border-radius: 18px; background: #101015; border: 1px solid #ffffff19; }
+    .phone-top { display: flex; justify-content: space-between; align-items: center; padding: 15px 17px; border-bottom: 1px solid #ffffff13; font-size: 19px; font-weight: 800; font-style: italic; letter-spacing: -.065em; }
+    .phone-top span:last-child { font-style: normal; color: #b8a4bd; font-size: 17px; letter-spacing: 0; }
+    .profile { display: flex; align-items: center; gap: 9px; padding: 12px 15px; }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; background: radial-gradient(circle at 68% 32%, #f2b1ab 0 8%, transparent 9%), linear-gradient(145deg, #634c78, #a66285 50%, #2a273c); border: 2px solid #ca6d9d; }
+    .profile-name { font-size: 12px; font-weight: 800; }
+    .profile-loc { display: block; color: #817986; font-size: 9px; margin-top: 2px; }
+    .dots { color: #c8bcc8; margin-left: auto; font-size: 20px; }
+    .photo { position: relative; isolation: isolate; aspect-ratio: 1.1; overflow: hidden; background: linear-gradient(180deg, var(--sky1, #bb7194) 0%, var(--sky2, #eeaca7) 46%, #7c5a78 59%, #2c2b46 100%); }
+    .photo::before { content: ""; position: absolute; width: 190px; height: 190px; border-radius: 50%; left: 49%; top: 14%; background: #ffdcbe9e; filter: blur(27px); z-index: -1; }
+    .photo::after { content: ""; position: absolute; inset: auto 0 0; height: 39%; background: linear-gradient(180deg, transparent, #161527d6); z-index: 0; }
+    .cloud { position: absolute; width: 70%; height: 40px; border-radius: 50%; background: #fee2e08a; filter: blur(25px); transform: rotate(-13deg); left: -16%; top: 28%; }
+    .cloud.two { left: 52%; top: 41%; opacity: .5; }
+    .buildings { position: absolute; inset: auto 0 0; height: 36%; background: linear-gradient(90deg, #262439 0 8%, transparent 8% 10%, #353149 10% 25%, transparent 25% 28%, #222335 28% 39%, transparent 39% 44%, #302739 44% 51%, transparent 51% 54%, #24263a 54% 75%, transparent 75% 80%, #32273b 80% 100%); opacity: .8; }
+    .silhouette { position: absolute; z-index: 1; bottom: 4%; left: 48%; transform: translateX(-50%); width: 90px; height: 139px; border-radius: 50% 50% 12% 12% / 19% 19% 10% 10%; background: linear-gradient(110deg, #221c31, #3b2d43); box-shadow: 0 -34px 0 -17px #2b2434; opacity: .87; }
+    .silhouette::before { content: ""; position: absolute; width: 50px; height: 57px; background: #2a2333; border-radius: 48% 52% 46% 48%; left: 19px; top: -30px; }
+    .photo-label { position: absolute; z-index: 2; top: 19px; left: 20px; color: #fff9; letter-spacing: .32em; line-height: 1.3; font-weight: 800; font-size: 10px; text-shadow: 0 1px 8px #0005; }
+    .year { position: absolute; z-index: 2; bottom: 20px; left: 19px; font-size: 44px; font-weight: 900; letter-spacing: -.07em; color: #fffa; }
+    .flash-heart { position: absolute; z-index: 5; inset: 0; display: grid; place-items: center; font-size: 112px; pointer-events: none; color: #ff477b; opacity: 0; text-shadow: 0 9px 35px #a0155c99; }
+    .flash-heart.pop { animation: heartPop .65s ease-out forwards; }
+    @keyframes heartPop { 0% { opacity: 0; transform: scale(.4); } 25% { opacity: 1; transform: scale(1.14); } 50% { opacity: 1; transform: scale(.96); } 100% { opacity: 0; transform: scale(1.35); } }
+    .toast { position: absolute; z-index: 6; top: 18px; right: 12px; max-width: 75%; background: #fff2f5; color: #3f172a; padding: 10px 13px; border-radius: 11px; font-size: 11px; font-weight: 850; box-shadow: 0 8px 25px #0006; transform: translateY(-15px); opacity: 0; transition: .2s; pointer-events: none; }
+    .toast.show { transform: translateY(0); opacity: 1; }
+    .stage-cover { position: absolute; z-index: 4; inset: 0; display: grid; place-content: center; text-align: center; justify-items: center; gap: 11px; background: #13101ad9; backdrop-filter: blur(10px); padding: 25px; transition: opacity .16s; pointer-events: none; }
+    .stage-cover.hidden { opacity: 0; pointer-events: none; }
+    .stage-cover .symbol { font-size: 40px; line-height: 1.2; }
+    .stage-cover strong { font-size: 18px; word-break: keep-all; }
+    .stage-cover small { color: #e3d4e1; font-size: 12px; line-height: 1.8; word-break: keep-all; }
+    .actions { display: flex; align-items: center; padding: 5px 11px 0; gap: 5px; }
+    .heart { border: 0; background: transparent; color: #f4eaf3; font-size: 35px; line-height: 1; width: 48px; height: 48px; display: grid; place-items: center; transition: transform .1s, color .13s; }
+    .heart.liked { color: #ff497c; transform: scale(1.17); animation: pulse .4s infinite alternate; }
+    .heart:not(:disabled):active { transform: scale(.86); }
+    @keyframes pulse { to { transform: scale(1.25); } }
+    .action-icon { width: 31px; font-size: 23px; text-align: center; color: #e9dce7; }
+    .bookmark { margin-left: auto; }
+    .post-text { padding: 0 17px 15px; min-height: 83px; }
+    .likes { font-size: 11px; font-weight: 850; margin: 2px 0 7px; }
+    .caption { color: #d9ccd6; font-size: 11px; line-height: 1.55; }
+    .caption strong { color: #fff; }
+    .date { margin-top: 7px; color: #746a77; font-size: 9px; }
+    .game-bar { padding: 12px 16px 15px; border-top: 1px solid #ffffff19; background: #1c1822; }
+    .bar-head { display: flex; justify-content: space-between; gap: 12px; font-size: 10px; color: #baaebe; margin-bottom: 9px; }
+    .bar-head strong { color: #ffc1d8; font-variant-numeric: tabular-nums; }
+    .track { height: 7px; border-radius: 50px; overflow: hidden; background: #4b3f4b; }
+    .fill { width: 0%; height: 100%; border-radius: 50px; background: linear-gradient(90deg, #f1b6d5, #ff507e); }
+    .status { margin-top: 9px; font-size: 10px; color: #a79ba9; min-height: 15px; }
+    .footnote { margin-top: 19px; color: #827687; font-size: 11px; text-align: center; }
+    .gameover { position: fixed; z-index: 40; inset: 0; display: none; align-items: center; justify-content: center; background: #0a0810d9; backdrop-filter: blur(14px); padding: 20px; }
+    .gameover.show { display: flex; }
+    .result-card { width: min(100%, 420px); border: 1px solid #ffffff24; background: linear-gradient(145deg, #2e202e, #15111c); border-radius: 24px; text-align: center; padding: 42px 30px; box-shadow: 0 30px 100px #000a; }
+    .result-emoji { font-size: 57px; }
+    .result-card h2 { font-size: 32px; letter-spacing: -.05em; margin: 15px 0 11px; }
+    .result-card p { color: #c8b7c8; font-size: 13px; line-height: 1.9; margin: 0 0 20px; word-break: keep-all; }
+    .grade-display { --grade-color: #c6a0eb; text-align: left; background: linear-gradient(115deg, #ffffff0d, #ffffff05); border: 1px solid #ffffff20; border-radius: 16px; padding: 17px 19px; margin: 0 0 11px; }
+    .grade-display[data-grade="A"] { --grade-color: #f6d391; }
+    .grade-display[data-grade="B"] { --grade-color: #d0bbf8; }
+    .grade-display[data-grade="C"] { --grade-color: #f3a4c6; }
+    .grade-display[data-grade="D"] { --grade-color: #f48b8b; }
+    .grade-overline { font-size: 10px; color: #b0a1b3; font-weight: 800; letter-spacing: .14em; }
+    .grade-row { display: flex; align-items: center; gap: 18px; margin-top: 5px; }
+    .grade-letter { color: var(--grade-color); font-size: 77px; font-weight: 1000; letter-spacing: -.09em; line-height: 1.1; text-shadow: 0 0 32px color-mix(in srgb, var(--grade-color) 24%, transparent); }
+    .grade-name { display: block; color: var(--grade-color); font-weight: 900; font-size: 18px; margin-bottom: 5px; }
+    .grade-detail { display: block; color: #c7bbc7; font-size: 11px; line-height: 1.6; }
+    .result-score { background: #ffffff0b; border: 1px solid #ffffff16; border-radius: 14px; padding: 16px; margin-bottom: 23px; font-size: 13px; color: #bfb1bf; }
+    .result-score strong { display: block; font-size: 32px; color: #ffd0e5; margin-top: 3px; }
+    @media (max-width: 800px) { .page { padding: 25px 17px 40px; } .masthead { margin-bottom: 30px; } .layout { grid-template-columns: 1fr; gap: 36px; max-width: 460px; margin: 0 auto; } h1 { font-size: clamp(45px, 10vw, 64px); } .description { font-size: 14px; margin-bottom: 20px; } .stats { margin-top: 22px; } .phone-area { max-width: 430px; width: 100%; margin: 0 auto; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="masthead">
+      <div class="brand"><div class="brand-mark">♥</div> SOCIAL PANIC</div>
+      <span class="tag">쓸데없는 게임 연구소 · VOL. 001</span>
+    </header>
+
+    <div class="layout">
+      <section class="intro">
+        <p class="eyebrow">THE MOST EMBARRASSING 1.5 SECONDS</p>
+        <h1>좋아요<br />실수로 <em>눌렀다!</em></h1>
+        <p class="description">전 애인 계정을 염탐하다가 2021년 게시물까지 내려왔다. 근데 오래된 사진마다 이상하게 의미심장한 멘트가 달려 있다. 이거 나 보라고 쓴 건가? …잠깐, 하트가 눌렸다.</p>
+
+        <div class="instruction">
+          <div class="step"><span class="num">01</span> 과거 게시물이 빠르게 차례로 등장</div>
+          <div class="step"><span class="num">02</span> 빨간 하트를 다시 누르거나 <b>스페이스바</b> 누르기</div>
+          <div class="step"><span class="num">03</span> 알림이 전송되기 전에 5라운드 살아남기</div>
+        </div>
+
+        <button id="startButton" class="primary" type="button">게임 시작하기 ↗</button>
+        <p class="subtext">※ 실제 인스타그램과 연결되지 않습니다. 안심하고 망하세요.</p>
+
+        <div class="stats" aria-live="polite">
+          <div class="stat"><span class="stat-label">진행 라운드</span><strong id="roundStat">0 / 5</strong></div>
+          <div class="stat"><span class="stat-label">멘탈 잔여량</span><strong id="livesStat">♥ ♥ ♥</strong></div>
+          <div class="stat"><span class="stat-label">최고 점수</span><strong id="bestStat">0</strong></div>
+        </div>
+      </section>
+
+      <section aria-label="게임 화면">
+        <div class="phone-area">
+          <div class="phone">
+            <div class="phone-top">in the past <span>◎</span></div>
+            <div class="profile"><div class="avatar"></div><div><div class="profile-name" id="username">@almost_forgot_u</div><span class="profile-loc">어느 여름, 2021</span></div><div class="dots">···</div></div>
+            <div class="photo" id="photo">
+              <div class="cloud"></div><div class="cloud two"></div><div class="buildings"></div><div class="silhouette"></div>
+              <div class="photo-label" id="photoLabel">LOST SUMMER</div>
+              <div class="year" id="yearText">2021</div>
+              <div class="flash-heart" id="flashHeart">♥</div>
+              <div class="toast" id="toast">🚨 좋아요 실수로 눌림!</div>
+              <div class="stage-cover" id="stageCover" aria-live="polite"><span class="symbol" id="coverSymbol">👀</span><strong id="coverTitle">비공개 염탐 모드</strong><small id="coverHint">시작 버튼을 누르면 게임이 시작됩니다.</small></div>
+            </div>
+            <div class="actions"><button id="heartButton" class="heart" type="button" aria-label="좋아요 취소" aria-disabled="true">♡</button><span class="action-icon">♧</span><span class="action-icon">➤</span><span class="action-icon bookmark">▢</span></div>
+            <div class="post-text"><div class="likes" id="likes">좋아요 128개</div><div class="caption"><strong id="captionName">@almost_forgot_u</strong> <span id="captionText">보고싶다</span></div><div class="date" id="postDate">2021년 8월 14일</div></div>
+            <div class="game-bar"><div class="bar-head"><span id="barLabel">알림 전송까지 남은 시간</span><strong id="timeText">대기 중</strong></div><div class="track"><div class="fill" id="fill"></div></div><div class="status" id="statusText" role="status">시작하면 손가락이 미끄러집니다.</div></div>
+          </div>
+        </div>
+        <div class="footnote">TIP · 기다리다가 하트가 빨개지는 순간 눌러!</div>
+      </section>
+    </div>
+  </main>
+
+  <div class="gameover" id="gameOver" role="dialog" aria-modal="true" aria-labelledby="resultTitle">
+    <div class="result-card">
+      <div class="result-emoji" id="resultEmoji">🫠</div>
+      <h2 id="resultTitle">전 애인이 봤다.</h2>
+      <p id="resultDescription">이제 변명은 불가능하다.</p>
+      <div class="grade-display" id="gradeDisplay" data-grade="C">
+        <div class="grade-overline">FINAL STALKING GRADE · 최종 염탐 등급</div>
+        <div class="grade-row">
+          <span class="grade-letter" id="gradeLetter">C</span>
+          <div><strong class="grade-name" id="gradeName">심야의 실수</strong><span class="grade-detail" id="gradeDetail">좋아요 취소 3/5회 · 알림 전송 2회</span></div>
+        </div>
+      </div>
+      <div class="result-score">이번 염탐 점수<strong id="finalScore">0</strong></div>
+      <button id="restartButton" class="primary" type="button">기억 지우고 다시하기 ↗</button>
+    </div>
+  </div>
+
+  <script>
+    // 여기부터 게임 로직! 초보라면 rounds의 문구부터 바꿔 보세요.
+    const rounds = [
+      { date: '2021년 8월 14일', handle: '@almost_forgot_u', caption: '보고싶다', photoLabel: 'LOST SUMMER', colors: ['#b879ad', '#edb4a2'] },
+      { date: '2021년 6월 02일', handle: '@almost_forgot_u', caption: '나만 아직 그 시간에 멈춰있어', photoLabel: 'OUR STREET', colors: ['#7874a5', '#e7aab6'] },
+      { date: '2021년 3월 19일', handle: '@almost_forgot_u', caption: '날이 추워. 따뜻하게 입어', photoLabel: 'FIRST DATE', colors: ['#7c739e', '#ffbc8a'] },
+      { date: '2020년 12월 25일', handle: '@almost_forgot_u', caption: '가끔은 너도 내 계정에 들어오는지 궁금해', photoLabel: 'CHRISTMAS', colors: ['#4a587c', '#9d749a'] },
+      { date: '2020년 7월 07일', handle: '@almost_forgot_u', caption: '여기까지 내려왔으면, 그냥 연락해', photoLabel: 'FIRST POST', colors: ['#8f66a4', '#f19da5'] }
+    ];
+
+    const $ = (id) => document.getElementById(id);
+    const startButton = $('startButton');
+    const restartButton = $('restartButton');
+    const heartButton = $('heartButton');
+    const stageCover = $('stageCover');
+    let phase = 'idle'; // idle, waiting, active, between, finished
+    let roundIndex = 0;
+    let lives = 3;
+    let score = 0;
+    let successes = 0;
+    let best = 0;
+    let startAt = 0;
+    let timeLimit = 0;
+    let tickId = null;
+    let pendingTimer = null;
+
+    try { best = Number(localStorage.getItem('socialPanicBest') || 0); } catch (_) { /* private browsing can block storage */ }
+    $('bestStat').textContent = best.toLocaleString('ko-KR');
+
+    function setCover(symbol, title, hint) {
+      $('coverSymbol').textContent = symbol;
+      $('coverTitle').textContent = title;
+      $('coverHint').textContent = hint;
+      stageCover.classList.remove('hidden');
+    }
+
+    function hideCover() { stageCover.classList.add('hidden'); }
+
+    function setHeart(liked) {
+      heartButton.textContent = liked ? '♥' : '♡';
+      heartButton.classList.toggle('liked', liked);
+      $('likes').textContent = `좋아요 ${liked ? 129 : 128}개`;
+      heartButton.setAttribute('aria-label', liked ? '좋아요 취소' : '좋아요 버튼');
+    }
+
+    function refreshStats() {
+      $('roundStat').textContent = `${Math.min(roundIndex + (phase === 'idle' ? 0 : 1), rounds.length)} / ${rounds.length}`;
+      $('livesStat').textContent = `${'♥ '.repeat(lives)}${'♡ '.repeat(3 - lives)}`.trim();
+      $('bestStat').textContent = best.toLocaleString('ko-KR');
+    }
+
+    function stopClock() {
+      if (tickId !== null) cancelAnimationFrame(tickId);
+      if (pendingTimer !== null) clearTimeout(pendingTimer);
+      tickId = null;
+      pendingTimer = null;
+    }
+
+    function loadRound() {
+      stopClock();
+      phase = 'waiting';
+      const data = rounds[roundIndex];
+      $('photo').style.setProperty('--sky1', data.colors[0]);
+      $('photo').style.setProperty('--sky2', data.colors[1]);
+      $('username').textContent = data.handle;
+      $('captionName').textContent = data.handle;
+      $('captionText').textContent = data.caption;
+      $('postDate').textContent = data.date;
+      $('photoLabel').textContent = data.photoLabel;
+      $('yearText').textContent = data.date.slice(0, 4);
+      $('toast').classList.remove('show');
+      $('flashHeart').classList.remove('pop');
+      $('fill').style.width = '0%';
+      $('timeText').textContent = '대기 중';
+      $('barLabel').textContent = '알림 전송까지 남은 시간';
+      $('statusText').textContent = '스크롤 중… 언제 좋아요가 눌릴지 몰라.';
+      setHeart(false);
+      hideCover();
+      refreshStats();
+      // 별도 스토리 화면 없이, 짧고 랜덤한 간격 뒤 바로 좋아요가 눌립니다.
+      pendingTimer = setTimeout(accidentalLike, 650 + Math.random() * 550);
+    }
+
+    function accidentalLike() {
+      if (phase !== 'waiting') return;
+      phase = 'active';
+      hideCover();
+      setHeart(true);
+      $('toast').textContent = '🚨 좋아요가 눌렸습니다!';
+      $('toast').classList.add('show');
+      $('statusText').textContent = roundIndex >= 3 ? '빨리! 곧 알림 전송돼!' : '빨간 하트 눌러!!! 빨리!!!';
+      const heart = $('flashHeart');
+      heart.classList.remove('pop');
+      void heart.offsetWidth; // 연속 라운드에서도 애니메이션 다시 시작
+      heart.classList.add('pop');
+      // 1.5초부터 0.4초까지 점점 빨라집니다.
+      const roundLimits = [1500, 1200, 900, 600, 400]; // 밀리초 (1000ms = 1초)
+      timeLimit = roundLimits[roundIndex];
+      startAt = performance.now();
+      tickId = requestAnimationFrame(updateClock);
+    }
+
+    function updateClock(now) {
+      if (phase !== 'active') return;
+      const remaining = Math.max(0, timeLimit - (now - startAt));
+      $('fill').style.width = `${remaining / timeLimit * 100}%`;
+      $('timeText').textContent = `${(remaining / 1000).toFixed(2)}초`;
+      if (remaining <= 0) {
+        failRound();
+      } else {
+        tickId = requestAnimationFrame(updateClock);
+      }
+    }
+
+    function onHeartClick() {
+      if (phase === 'waiting') {
+        // 너무 일찍 눌렀다면 본인이 먼저 좋아요를 누른 셈입니다. ㅋㅋ
+        if (pendingTimer !== null) clearTimeout(pendingTimer);
+        accidentalLike();
+      } else if (phase === 'active') {
+        const elapsed = performance.now() - startAt;
+        if (elapsed >= timeLimit) { failRound(); return; }
+        succeedRound(elapsed);
+      }
+    }
+
+    function succeedRound(elapsed) {
+      if (phase !== 'active') return;
+      stopClock();
+      phase = 'between';
+      const gained = Math.max(100, Math.round((timeLimit - elapsed) * 1.4));
+      score += gained;
+      successes += 1;
+      setHeart(false);
+      $('toast').classList.remove('show');
+      $('fill').style.width = '0%';
+      $('timeText').textContent = `${(elapsed / 1000).toFixed(2)}초 반응`;
+      $('statusText').textContent = `+${gained.toLocaleString('ko-KR')}점 · 일단 안 들킨 것 같습니다.`;
+      const messages = ['휴… 심장 떨어질 뻔', '방금 인생에서 제일 빨랐다', '이런 재능 필요 없는데', '이제 그만 염탐하자', '다시는 여기 들어오지 마'];
+      setCover('😮‍💨', '좋아요 취소 성공!', messages[roundIndex]);
+      advanceRound();
+    }
+
+    function failRound() {
+      if (phase !== 'active') return;
+      stopClock();
+      phase = 'between';
+      lives -= 1;
+      $('fill').style.width = '0%';
+      $('timeText').textContent = '0.00초';
+      $('toast').classList.remove('show');
+      $('statusText').textContent = '알림 전송됨 · 이건 좀 치명적이다.';
+      setCover('💀', '알림 전송 완료', 'OOO님이 회원님의 게시물을 좋아합니다…');
+      refreshStats();
+      if (lives === 0) {
+        pendingTimer = setTimeout(() => finishGame(false), 850);
+      } else {
+        advanceRound();
+      }
+    }
+
+    function advanceRound() {
+      refreshStats();
+      if (roundIndex === rounds.length - 1) {
+        pendingTimer = setTimeout(() => finishGame(lives === 3), 850);
+      } else {
+        pendingTimer = setTimeout(() => { roundIndex += 1; loadRound(); }, 850);
+      }
+    }
+
+    function finishGame(survived) {
+      stopClock();
+      phase = 'finished';
+      $('roundStat').textContent = `${Math.min(roundIndex + 1, rounds.length)} / ${rounds.length}`;
+      if (score > best) {
+        best = score;
+        try { localStorage.setItem('socialPanicBest', String(best)); } catch (_) { /* ignore */ }
+      }
+      refreshStats();
+      $('resultEmoji').textContent = survived ? '🕶️' : '🫠';
+      $('resultTitle').textContent = survived ? '완벽한 염탐이었다.' : lives > 0 ? '살아남긴 했는데 들켰다.' : '전 애인이 봤다.';
+      $('resultDescription').textContent = survived
+        ? '5라운드 생존 완료. 이제 제발 차단하고 자자.'
+        : lives > 0
+          ? `5라운드까지 왔지만 좋아요 알림이 ${3 - lives}번 갔습니다. 왜 2021년까지 내려갔니…`
+          : '2021년 게시물을 좋아하셨네요? 변명할 시간도 없었습니다.';
+      // 등급은 반응속도 점수와 별개로, 알림을 몇 번 막았는지로 결정됩니다.
+      const grade = successes === 5 ? 'A' : successes === 4 ? 'B' : successes === 3 ? 'C' : 'D';
+      const gradeNames = { A: '전설의 잠입술', B: '프로 염탐러', C: '심야의 실수', D: '염탐 현행범' };
+      $('gradeDisplay').dataset.grade = grade;
+      $('gradeLetter').textContent = grade;
+      $('gradeName').textContent = gradeNames[grade];
+      $('gradeDetail').textContent = `좋아요 취소 ${successes}/${rounds.length}회 · 알림 전송 ${3 - lives}회`;
+      $('finalScore').textContent = score.toLocaleString('ko-KR');
+      $('gameOver').classList.add('show');
+      restartButton.focus();
+    }
+
+    function startGame() {
+      stopClock();
+      roundIndex = 0;
+      lives = 3;
+      score = 0;
+      successes = 0;
+      $('gameOver').classList.remove('show');
+      startButton.textContent = '처음부터 다시하기 ↗';
+      loadRound();
+    }
+
+    startButton.addEventListener('click', startGame);
+    restartButton.addEventListener('click', startGame);
+    heartButton.addEventListener('click', onHeartClick);
+    document.addEventListener('keydown', (event) => {
+      if (event.code === 'Space' && !event.repeat && (phase === 'active' || phase === 'waiting')) {
+        event.preventDefault();
+        onHeartClick();
+      }
+    });
+  </script>
+</body>
+</html>
